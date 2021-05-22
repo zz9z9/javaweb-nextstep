@@ -19,6 +19,16 @@ public class StringCalculatorTest {
     }
 
     @Test
+    @DisplayName("표현식에 하나의 숫자만 있으면 그대로 리턴한다")
+    public void onlyOneNumber() {
+        String exp = "12";
+        int[] result1 = calculator.getSplitNums(exp);
+        int[] expectResult1 = new int[]{12};
+
+        assertThat(Arrays.equals(result1, expectResult1)).isTrue();
+    }
+
+    @Test
     @DisplayName("쉼표 또는 콜론을 구분자로 가지는 문자열을 전달하는 경우 구분자를 기준으로 숫자를 분리")
     public void splitNumsByDefaultDelimiter() {
         String exp = "1,2,3,10;4";
