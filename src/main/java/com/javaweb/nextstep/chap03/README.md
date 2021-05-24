@@ -21,7 +21,7 @@
 - 위 방법처럼 pom.xml 변경시키지 않고 기존 것 그대로 사용할 수 있다.
 - mvn package 까지는 같으나 jar 파일을 실행시키는게 아니라 다음과 같은 명령어 사용 (-cp : classpath)
 - java -cp target/classes:target/dependency/* webserver.WebServer 8080 & (bash 기준)
-- java -cp target/classes:target/dependency/\* webserver.WebServer 8080 & (zsh 기준)
+- java -cp target/classes:target/dependency/\\* webserver.WebServer 8080 & (zsh 기준)
  
  > 방법 3 : 쉘 스크립트 작성 (추후 추가 예정)
 
