@@ -17,9 +17,18 @@
 - 브라우저에서 EC2 8080 포트 접속 결과
  ![image](https://user-images.githubusercontent.com/64415489/119369800-89cc3800-bcef-11eb-9bff-2bf68efff2f8.png)
  
- > 방법 2 : 쉘 스크립트 작성 (추후 추가 예정)
+ > 방법 2 : 방법1 에서 pom.xml 변경하지 않기 (책에 나온 방법)
+- 위 방법처럼 pom.xml 변경시키지 않고 기존 것 그대로 사용할 수 있다.
+- mvn package 까지는 같으나 jar 파일을 실행시키는게 아니라 다음과 같은 명령어 사용 (-cp : classpath)
+- java -cp target/classes:target/dependency/* webserver.WebServer 8080 & (bash 기준)
+- java -cp target/classes:target/dependency/\* webserver.WebServer 8080 & (zsh 기준)
+ 
+ > 방법 3 : 쉘 스크립트 작성 (추후 추가 예정)
 
- > 방법 3 : 도커 사용 (추후 추가 예정)
+ > 방법 4 : 도커 사용 (추후 추가 예정)
+
+2. p.83 요구사항에 'HTTP 웹 서버 배포 작업은 root 계정이 아닌 배포를 담당할 새로운 계정을 만들어 진행한다'
+
 
 ### 배운 것 
 1. AWS EC2 인스턴스 생성하기 
