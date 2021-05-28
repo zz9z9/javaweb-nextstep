@@ -23,7 +23,7 @@
 
         return htmlPage.substring(1); // 맨 앞에 '/' 지우기 위함
     }
-    // http response를 위해 파일을 byte로 변환
+    // http response를 위해 파일을 byte로 변환(절대경로 ver)
     private byte[] convertHtmlToByte(String fileName) throws IOException {
         String rootPath = System.getProperty("user.dir");
         String filePath = rootPath + "/webapp/" + fileName;
@@ -31,9 +31,17 @@
 
         return Files.readAllBytes(file.toPath());
     }  
+    // http response를 위해 파일을 byte로 변환(상대경로 ver - 책 참고)
+    private byte[] convertHtmlToByte(String fileName) throws IOException {
+        String filePath = "./webapp/" + fileName;
+        File file = new File(filePath);
+
+        return Files.readAllBytes(file.toPath());
+    }  
 ```
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
+- 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다.
 
-### 인상 깊었던 말
+### 인상 깊었던 말로
 
