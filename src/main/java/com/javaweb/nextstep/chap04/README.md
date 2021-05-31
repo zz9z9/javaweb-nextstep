@@ -1,7 +1,7 @@
 ## Chapter4 : HTTP 웹 서버 구현을 통해 HTTP 이해하기 
 
 ### 구현 (의식의 흐름..)
-> #### 요구사항1 : http://localhost:8080/index.html로 접속했을 때 webapp 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다
+> ### 요구사항1 : http://localhost:8080/index.html로 접속했을 때 webapp 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다
   - index.html 파일 읽어서 byte 형태로 만들어준 뒤 DataOutputStream을 통해 response 넘기면 되지 않을까.. ?   
   - ### <b> http://localhost:8080/index.html 라는 요청왔을 때 '/' 이후 부분에 파일명을 어떻게 가져오지 ?? </b>
     - connection.getInputStream() 디버거로 찍어보니 여기엔 없는 것 같다. (connection은 Socket 객체)
@@ -41,7 +41,7 @@
 ```
 <br>
 
-> #### 요구사항2 : GET 방식으로 회원가입하기 
+> ### 요구사항2 : GET 방식으로 회원가입하기 
 - 요구사항1 에서 구현한 메서드를 개선해야 할 것 같다. 
 - 일단 js, css 파일에 대한 요청도 response로 넘겨줘야 하기 때문에 getRequestHtmlName, convertHtmlToByte 이라는 메서드명을 좀 더 추상적으로 변경하고 html 파일이 아닌 경우에도 처리가 가능하도록 만들어야한다. 
 - client 관련 파일 디렉토리 최상위 폴더인 "webapp"도 변수에 추가하지 말고 클래스 변수로 선언하고 final로 상수화 하는게 나을 것 같다.
@@ -202,10 +202,39 @@
   ```  
 </details>
 
+<br>
+
+> ### 요구사항3 : POST 방식으로 회원가입하기 
+- ### <b>POST 방식으로 넘어오는(body에 담겨있는) 파라미터는 어떻게 받지? </b>
+  - POST 방식의 경우 bufferedReader의 readLine() 사용하게 되면 http header는 읽지만 body는 읽어오지 못한다.  
+  - 원인을 찾아보니 header의 마지막 부분("") readLine() 하는 부분에서 계속 hanging 되어있다. 
+  - hanging 되는 이유는 request header 마지막 라인이 공백인데 readLine()의 경우 line의 끝에 개행 문자가 없는 경우, 값이 올 때 까지 계속 기다린다고 한다. 
+  - 따라서, 공백인 경우를 체크하는 로직이 필요하고, Content-Length를 구해서 그 크기만큼 나머지를 read() 하면 된다. 
+  - readLine() 대신 read()를 사용하는 이유는, body로 넘어오는 파라미터 또한 끝에 개행문자가 없기 때문에 readLine() 사용시 대기상태에 빠진다. 
+  
+```java
+        if(httpMethod.equals("POST")) {
+            int contentLen = 0;
+            for(String line = bufferedReader.readLine(); (!line.isEmpty() && line!=null); line=bufferedReader.readLine()) {
+                if(line.contains("Content-Length")) {
+                    String[] info = line.split(":");
+                    contentLen = Integer.parseInt(info[1].trim());
+                    break;
+                }
+            }
+
+            if (contentLen > 0) {
+                char[] body = new char[contentLen];
+                bufferedReader.read(body);
+                String params = new String(body);
+            }
+        }
+```
+
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
 - 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다. 
-- 빌더 패턴
+- BufferedReader readLine() 사용시 잘못하면 계속 대기 상태에 있을 수 있다. 
 
 ### 인상 깊었던 말
 
