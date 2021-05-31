@@ -6,4 +6,4 @@
 4. 의식적으로 리팩토링 연습을 하자. 
 </h5>
 
-- chap03 ~ 06 구현 코드 (현재 chap04 진행중) :  https://github.com/zz9z9/web-application-server
+- chap03 ~ 06 구현 코드 (현재 chap04 진행중) :  https://github.com/zz9z9/nextstep-web-application-server
