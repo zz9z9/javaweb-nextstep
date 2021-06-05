@@ -235,6 +235,7 @@
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
 - 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다. 
 - BufferedReader readLine() 사용시 잘못하면 계속 대기 상태에 있을 수 있다. 
+- equals() 오버라이드시 hashcode() 오버라이드 하지 않으면 HashMap에서 값 가져올 때 원하지 않는 결과를 얻게된다. 
 
 ### 인상 깊었던 말
 
