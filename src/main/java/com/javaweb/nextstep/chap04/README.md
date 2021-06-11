@@ -231,6 +231,12 @@
         }
 ```
 
+<br>
+
+> ### 요구사항4 : 302 status code 적용
+- ### <b> 회원가입 완료 후 response header에 하드코딩 없이 어떻게하면 Location : localhost:8080/index.html 을 세팅해줄 수 있을까 ?</b>
+- ### <b> 비즈니스 로직 수행하는 메서드의 다양한 리턴값을 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리시켜야할까? </b>
+
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
 - 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다. 
