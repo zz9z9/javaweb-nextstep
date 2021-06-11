@@ -240,8 +240,17 @@
 
 > ### 요구사항5 : 로그인하기
 - ### <b> 비즈니스 로직 수행하는 메서드의 다양한 타입의 리턴값을 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리해야할까? </b>
+  - 먼저 웹 서버의 관점에서 생각해봤을때, 웹 서버에서 클라이언트로 응답하는 형태는 크게 'html 페이지 / 데이터(json 등)' 이라고 생각했다. 
+  - 따라서, 클라이언트의 요청에 대해 적절한 응답을 하기 위해 필요한 것은 위에서 정의한 '응답의 형태'와 '실제 데이터' 두 가지라고 생각하여 이를 나타내는 ExecutionResult 클래스를 만들었다.
+  - 이에 따라 executeMethodWithParams, executeMethodWithoutParams 메서드의 리턴값을 ExecutionResult로 바꾸고 다양한 타입의 리턴값을 해당 클래스의 속성 중 '실제 데이터'(Object) 부분에 세팅했다. 
+     
 - ### <b> 비즈니스 로직 수행하는 메서드들의 파라미터는 개수도 다양하고 타입도 다양한데 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리해야할까? </b>
-
+  - RequestHandler에서 LogicMapper로 넘어오는 파라미터의 형태는 Map인데, LogicMapper에서 맵핑시켜줄 다양한 비즈니스 로직 메서드의 파라미터를 일일이 맞추려면 추상화된 두 개의 메서드만 갖고는 불가능하다고 생각했다. 
+  - 왜 이렇게 됐을까를 생각해보니 LogicMapper 입장에서 실제로 실행되는 비즈니스 로직 클래스, 파라미터 타입, 개수 등 알아야할게 너무 많은 것 같았다. 
+  - 따라서, LogicMapper에서 실제 비즈니스 로직을 바로 실행하는게 아니라 중간에 LogicExecutor라는 객체를 두고 LogicMapper에서는 들어온 요청에 따라 실제 로직 메서드가 아닌 LogicExecutor의 특정 메서드를 실행하고 파라미터도 Map 형태로만 넘기도록 수정.
+  - LogicExcecutor에서는 Map형태로 받은 파라미터를 가공하여 실제 로직 메서드에 필요한 파라미터 형태로 만들고 해당 메서드를 호출한다.
+  - 이렇게 하고 보니 LogicExecutor가 MVC 모델에서 Controller와 약간 비슷한 역할이지 않나 하는 생각이 든다. 
+  
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
 - 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다. 
