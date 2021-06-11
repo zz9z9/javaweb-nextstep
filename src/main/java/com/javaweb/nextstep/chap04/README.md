@@ -239,7 +239,8 @@
 <br>
 
 > ### 요구사항5 : 로그인하기
-- ### <b> 비즈니스 로직 수행하는 메서드의 다양한 리턴값을 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리시켜야할까? </b>
+- ### <b> 비즈니스 로직 수행하는 메서드의 다양한 타입의 리턴값을 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리해야할까? </b>
+- ### <b> 비즈니스 로직 수행하는 메서드들의 파라미터는 개수도 다양하고 타입도 다양한데 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리해야할까? </b>
 
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
