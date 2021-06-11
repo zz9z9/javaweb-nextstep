@@ -243,13 +243,147 @@
   - 먼저 웹 서버의 관점에서 생각해봤을때, 웹 서버에서 클라이언트로 응답하는 형태는 크게 'html 페이지 / 데이터(json 등)' 이라고 생각했다. 
   - 따라서, 클라이언트의 요청에 대해 적절한 응답을 하기 위해 필요한 것은 위에서 정의한 '응답의 형태'와 '실제 데이터' 두 가지라고 생각하여 이를 나타내는 ExecutionResult 클래스를 만들었다.
   - 이에 따라 executeMethodWithParams, executeMethodWithoutParams 메서드의 리턴값을 ExecutionResult로 바꾸고 다양한 타입의 리턴값을 해당 클래스의 속성 중 '실제 데이터'(Object) 부분에 세팅했다. 
+```java
+public class ExecutionResult {
+    private ResponseType responseType;
+    private Object returnData;
+
+    public ExecutionResult(ResponseType responseType, Object returnData) {
+        this.responseType = responseType;
+        this.returnData = returnData;
+    }
+
+    public ResponseType getResponseType() {
+        return responseType;
+    }
+
+    public Object getReturnData() {
+        return returnData;
+    }
+}
+```     
      
 - ### <b> 비즈니스 로직 수행하는 메서드들의 파라미터는 개수도 다양하고 타입도 다양한데 LogicMapper에 추상화 시킨 두 개의 메서드 executeMethodWithParams, executeMethodWithoutParams에서 어떻게 받아서 처리해야할까? </b>
   - RequestHandler에서 LogicMapper로 넘어오는 파라미터의 형태는 Map인데, LogicMapper에서 맵핑시켜줄 다양한 비즈니스 로직 메서드의 파라미터를 일일이 맞추려면 추상화된 두 개의 메서드만 갖고는 불가능하다고 생각했다. 
-  - 왜 이렇게 됐을까를 생각해보니 LogicMapper 입장에서 실제로 실행되는 비즈니스 로직 클래스, 파라미터 타입, 개수 등 알아야할게 너무 많은 것 같았다. 
+  - 왜 이렇게 됐을까를 생각해보니 LogicMapper 입장에서 실제로 실행되는 비즈니스 로직 클래스, 파라미터 타입, 개수 등 알아야할게 너무 많은 것 같았다. 위 요구사항2에 보면 LogicMapper의 미흡함에 대해 적어놨는데, 그 때 더 깊게 생각하지 않았던게 결국 발목을 잡은 것 같다.
   - 따라서, LogicMapper에서 실제 비즈니스 로직을 바로 실행하는게 아니라 중간에 LogicExecutor라는 객체를 두고 LogicMapper에서는 들어온 요청에 따라 실제 로직 메서드가 아닌 LogicExecutor의 특정 메서드를 실행하고 파라미터도 Map 형태로만 넘기도록 수정.
   - LogicExcecutor에서는 Map형태로 받은 파라미터를 가공하여 실제 로직 메서드에 필요한 파라미터 형태로 만들고 해당 메서드를 호출한다.
   - 이렇게 하고 보니 LogicExecutor가 MVC 모델에서 Controller와 약간 비슷한 역할이지 않나 하는 생각이 든다. 
+  
+<details>
+   <summary>LogicMapper 개선해본 버전(RequestLogicMapper)</summary>
+    
+```java
+    public class RequestLogicMapper {
+        static class Execution {
+            private String methodName;
+            private ResponseType responseType;
+    
+            public Execution(String methodName, ResponseType responseType) {
+                this.methodName = methodName;
+                this.responseType = responseType;
+            }
+    
+            public String getMethodName() {
+                return methodName;
+            }
+    
+            public ResponseType getResponseType() {
+                return responseType;
+            }
+        }
+    
+        private LogicExecutor logicExecutor = LogicExecutor.getInstance();
+        private Map<String, Execution> getMappingUrl = new HashMap<>();
+        private Map<String, Execution> postMappingUrl = new HashMap<>();
+    
+        public RequestLogicMapper() {
+            initGetRequest();
+            initPostRequest();
+        }
+    
+        private void initGetRequest() {
+            getMappingUrl.put("/user/create", new Execution("signup", ResponseType.HTML_PAGE));
+        }
+    
+        private void initPostRequest() {
+            postMappingUrl.put("/user/create", new Execution("signup", ResponseType.HTML_PAGE));
+            postMappingUrl.put("/user/login", new Execution("login", ResponseType.HTML_PAGE));
+        }
+    
+        public ExecutionResult doRequestLogic(HttpRequest httpRequest) throws Exception {
+            HttpMethod httpMethod = httpRequest.getHttpMethod();
+            String requestUrl = httpRequest.getRequestUrl();
+            Map<String,String> params = httpRequest.getParams();
+            Execution execution = null;
+    
+            switch (httpMethod) {
+                case GET:
+                    execution = Optional.ofNullable(getMappingUrl.get(requestUrl)).orElseThrow(NoSuchMethodError::new);
+                    break;
+                case POST:
+                    execution = Optional.ofNullable(postMappingUrl.get(requestUrl)).orElseThrow(NoSuchMethodError::new);
+                    break;
+            }
+    
+            ExecutionResult result = (params!=null) ? executeMethodWithParams(execution, params) : executeMethodWithoutParams(execution);
+    
+            return result;
+        }
+    
+        public ExecutionResult executeMethodWithParams(Execution execution, Map<String,String> params) throws Exception {
+            Method logic = logicExecutor.getClass().getMethod(execution.getMethodName(), Map.class);
+            Object returnObj = logic.invoke(logicExecutor, params);
+    
+            return new ExecutionResult(execution.getResponseType(), returnObj);
+        }
+    
+        public ExecutionResult executeMethodWithoutParams(Execution execution) throws Exception {
+            Method logic = logicExecutor.getClass().getMethod(execution.getMethodName());
+            Object returnObj = logic.invoke(logicExecutor);
+    
+            return new ExecutionResult(execution.getResponseType(), returnObj);
+        }
+    
+```
+</details>
+
+<details>
+   <summary>LogicExecutor</summary>
+   
+```java
+public class LogicExecutor {
+
+    private static final LogicExecutor logicExecutor = new LogicExecutor();
+
+    private LogicExecutor(){}
+
+    public static LogicExecutor getInstance() {
+        return logicExecutor;
+    }
+
+    private UserLogic userLogic = UserLogic.getInstance();
+
+    public String signup(Map<String, String> params) {
+        String id = params.get("userId");
+        String pw = params.get("password");
+        String name = params.get("name");
+        String email = params.get("email");
+        User newUser = new User(id, pw, name, email);
+
+        return userLogic.signup(newUser);
+    }
+
+    public String login(Map<String, String> params) {
+        String id = params.get("userId");
+        String pw = params.get("password");
+
+        return userLogic.login(id,pw);
+    }
+
+}
+```
+</details>
   
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
