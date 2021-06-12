@@ -384,6 +384,9 @@ public class LogicExecutor {
 }
 ```
 </details>
+
+- ### <b> LogicExecutor에 선언한 메서드에서 Map 형태의 파라미터 뿐 아니라 setCookie 등의 처리를 위해 HttpResponse 같은 파라미터도 받아야하는 경우 RequestLogicMapper에서 어떻게 처리해줘야할까? </b>
+
   
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
