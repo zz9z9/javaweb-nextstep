@@ -386,6 +386,14 @@ public class LogicExecutor {
 </details>
 
 - ### <b> LogicExecutor에 선언한 메서드에서 Map 형태의 파라미터 뿐 아니라 setCookie 등의 처리를 위해 HttpResponse 같은 파라미터도 받아야하는 경우 RequestLogicMapper에서 어떻게 처리해줘야할까? </b>
+  - 일단은 아래 코드처럼 했는데 너무 어거지로 한거같다. 실제 Spring MVC에서는 Controller 단에서 HttpServletRequest, HttpServletRespone 등을 자유롭게 받을 수 있던데, 어떻게 가능한건지 공부해보자 
+```java
+ try {
+    logic = logicExecutor.getClass().getMethod(execution.getMethodName(), Map.class);
+ } catch (NoSuchMethodException e) {
+    logic = logicExecutor.getClass().getMethod(execution.getMethodName(), Map.class, HttpResponse.class);
+ }
+```
 
   
 ### 배운 것
@@ -393,6 +401,7 @@ public class LogicExecutor {
 - 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다. 
 - BufferedReader readLine() 사용시 잘못하면 계속 대기 상태에 있을 수 있다. 
 - equals() 오버라이드시 hashcode() 오버라이드 하지 않으면 HashMap에서 값 가져올 때 원하지 않는 결과를 얻게된다. 
+- 쿠키의 domain과 path
 
 ### 인상 깊었던 말
 
