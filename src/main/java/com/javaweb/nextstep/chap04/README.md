@@ -395,6 +395,11 @@ public class LogicExecutor {
  }
 ```
 
+<br>
+
+> ### 요구사항6 : 사용자 목록 출력
+- <h3><b> cookie에 세팅된 login 여부 값을 가져와서 로그인 한 경우 목록 출력해야하는데, 그러려면 LogicExecutor에 HttpRequest를 받아서 실제 로직에서 getCookie로 해당 값이 있는지 여부를 알아야하는데<br> 
+HttpRequest까지 메서드 파라미터로 받으려면 어떻게 해야할까?? 요구사항5 마지막 고민이 여기서도 발목을 잡는다</b></h3>
   
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
