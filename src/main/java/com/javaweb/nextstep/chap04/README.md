@@ -401,6 +401,14 @@ public class LogicExecutor {
 - <h3><b> cookie에 세팅된 login 여부 값을 가져와서 로그인 한 경우 목록 출력해야하는데, 그러려면 LogicExecutor에 HttpRequest를 받아서 실제 로직에서 getCookie로 해당 값이 있는지 여부를 알아야하는데
 HttpRequest까지 메서드 파라미터로 받으려면 어떻게 해야할까?? 요구사항5 마지막 고민이 여기서도 발목을 잡는다</b></h3>
   
+<br>  
+  
+> ### 요구사항7 : CSS 지원하기 
+- ### 왜 css 파일이 적용이 안된 화면이 렌더링될까 ?? 
+  - 현재 내가 만든 애플리케이션의 response header에 세팅되는 Content-type은 모두 "text/html;charset=utf-8" 이다.
+  - 브라우저가 css 파일을 읽고 적용하기 위해선 "text/css"로 세팅해줘야 한다
+  - js파일은 "application/javascript"로 세팅해줘야한다.
+  
 ### 배운 것
 - Java I/O (InputStream, InputStreamReader, BufferedReader, FileReader 등 - [참고 링크](https://st-lab.tistory.com/41)) 
 - 상대경로를 사용할 경우, ./ (현재 위치)는 bin, src 폴더를 포함하는 해당 자바 프로젝트 폴더의 위치이다. 
